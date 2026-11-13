@@ -67,22 +67,22 @@ if(last.weeks>=8&&last.adequate==='yes')return {tone:'warn',title:'充分治療�
 return {tone:'info',title:'持續追蹤並檢視治療負擔',text:'尚未達下降10分的反應指標；依耐受性、療程進度與功能共同決策，無自動加藥／停藥規則。',delta};
 }
 const cases=[
-['交通事故後反覆再體驗',{pcl:'48',preference:'therapy'},'A–H條件完整且醫師確認；偏好心理治療時優先討論CPT／PE／EMDR，不自動加藥。'],
-['事件後兩週，症狀明顯',{elapsed:'month',duration:'month',pcl:'',confirmed:false},'症狀未滿1個月不診斷PTSD；另以ASD規則評估，提供支持並於1個月內追蹤。'],
-['高齡、CKD、偏好藥物',{age:'older',renal:'severe',pcl:'43',preference:'med'},'Sertraline通常不需因腎功能調整；高齡與進階腎病仍須慢調並追蹤血鈉、跌倒及出血。'],
-['血液透析合併低血壓惡夢',{renal:'dialysis',bp:'low',orthostasis:'yes',nightmares:'yes',pcl:'46',preference:'med'},'惡夢合併低血壓／姿勢性症狀時不自動建議prazosin，先評估跌倒與透析低血壓。'],
-['自傷計畫，緊急評估',{risk:'imminent',pcl:'62',confirmed:false},'有自傷計畫或無法確保安全時，暫停一般演算法，直接啟動緊急評估。'],
-['青少年受暴後症狀',{age:'young',event:'violence',pcl:'',confirmed:false},'兒少不套用成人PCL-5門檻與劑量，轉兒少專科並評估保護需求。'],
-['疑似雙相，偏好藥物',{bipolar:'yes',preference:'med',pcl:'45'},'疑似或已知雙相不直接使用抗憂鬱劑單方，先轉精神科評估。'],
-['高分但無逃避症狀',{symptoms:['yes','yes','yes','yes','yes','no','no',...Array(13).fill('yes')],pcl:'54',confirmed:false},'PCL-5高分不能補足缺少的C群逃避症狀，結果為亞閾值，需臨床訪談。'],
-['懷孕中受暴後，偏好藥物',{event:'violence',pregnant:'yes',preference:'med',pcl:'50'},'懷孕、備孕或哺乳轉周產期共同決策，工具不自動產生標準處方。'],
-['中度肝硬化，偏好藥物',{event:'medical',liver:'moderate',preference:'med',pcl:'47'},'Child-Pugh B以上不建議sertraline，其他藥物交專科及藥師規劃。'],
-['未控制高血壓，想比較venlafaxine',{event:'disaster',bp:'high',preference:'med',med:'venlafaxine',pcl:'52'},'血壓未控制時先控制血壓，暫不開始venlafaxine；可改比較其他選項。'],
-['酒精使用合併明顯解離',{event:'violence',comorbid:['substance','dissociation','depression'],preference:'combined',pcl:'58'},'物質使用協同治療、不一概排除創傷治療；解離由受訓團隊調整節奏並評估複雜性PTSD。'],
-['充分治療後反應不佳，惡夢持續',{event:'work',prior:'failed',preference:'med',med:'sertraline',nightmares:'yes',pcl:'51'},'先核對診斷、共病、依從性及療程品質；prazosin只針對惡夢，不自動疊加抗精神病藥。'],
-['持續家暴，環境不安全',{event:'violence',risk:'unsafe',pcl:'55',confirmed:false},'持續受暴屬當日優先：先處理環境安全與保護資源，再規劃治療。'],
-['頭部外傷後，其他原因待排除',{excluded:'no',pcl:'44',confirmed:false},'腦傷、物質、藥物或睡眠疾患仍可能解釋症狀時，先鑑別，不以症狀計數判定PTSD。'],
-['多年前災難，近兩週新症狀',{event:'disaster',elapsed:'year',duration:'month',pcl:'',confirmed:false},'舊創傷伴短期新症狀不自動判為ASD或PTSD，釐清延遲出現與新事件並短期追蹤。']];
+['交通事故後反覆再體驗',{pcl:'48',preference:'therapy'},'A–H條件完整且醫師確認；偏好心理治療時優先討論CPT／PE／EMDR，不自動加藥。','38歲男性，8個月前騎機車遭轎車撞擊，同行友人重傷。之後反覆浮現事故畫面、做相關惡夢，經過路口就心悸冒汗；刻意繞路、不願談事故，常自責、易怒、睡不好，已無法騎車通勤上班。無自傷想法，希望先接受心理治療。'],
+['事件後兩週，症狀明顯',{elapsed:'month',duration:'month',pcl:'',confirmed:false},'症狀未滿1個月不診斷PTSD；另以ASD規則評估，提供支持並於1個月內追蹤。','29歲女性，2週前在工地目睹同事從高處墜落。之後腦中反覆出現當時畫面、難以入睡、容易受驚嚇，不敢經過現場，已請假在家。距事件未滿1個月。'],
+['高齡、CKD、偏好藥物',{age:'older',renal:'severe',pcl:'43',preference:'med'},'Sertraline通常不需因腎功能調整；高齡與進階腎病仍須慢調並追蹤血鈉、跌倒及出血。','72歲男性，慢性腎臟病第4期（CrCl約25 mL/min），1年前車禍後反覆回想、惡夢與過度警戒，不敢搭車外出。行動不便，不想每週往返心理治療，希望討論藥物。'],
+['血液透析合併低血壓惡夢',{renal:'dialysis',bp:'low',orthostasis:'yes',nightmares:'yes',pcl:'46',preference:'med'},'惡夢合併低血壓／姿勢性症狀時不自動建議prazosin，先評估跌倒與透析低血壓。','58歲女性，每週三次血液透析，透析中常低血壓、起身頭暈。1年前車禍後幾乎每晚做惡夢驚醒，白天疲倦、避免搭車。希望討論藥物改善惡夢。'],
+['自傷計畫，緊急評估',{risk:'imminent',pcl:'62',confirmed:false},'有自傷計畫或無法確保安全時，暫停一般演算法，直接啟動緊急評估。','33歲男性，車禍後長期失眠與自責。今日門診表示已準備好大量藥物，打算今晚結束生命，無法承諾安全。'],
+['青少年受暴後症狀',{age:'young',event:'violence',pcl:'',confirmed:false},'兒少不套用成人PCL-5門檻與劑量，轉兒少專科並評估保護需求。','15歲國中生，7個月前在校外遭同儕圍毆。之後拒學、做惡夢、聽到喧嘩聲就驚嚇，家長陪同就診。'],
+['疑似雙相，偏好藥物',{bipolar:'yes',preference:'med',pcl:'45'},'疑似或已知雙相不直接使用抗憂鬱劑單方，先轉精神科評估。','41歲女性，車禍後出現典型PTSD症狀。過去曾有連續數天幾乎不睡、話多、衝動花費的時期，母親有雙相情緒障礙。希望直接開藥。'],
+['高分但無逃避症狀',{symptoms:['yes','yes','yes','yes','yes','no','no',...Array(13).fill('yes')],pcl:'54',confirmed:false},'PCL-5高分不能補足缺少的C群逃避症狀，結果為亞閾值，需臨床訪談。','35歲男性，1年前車禍，PCL-5達54分，再體驗、負面情緒與警覺症狀明顯；但仍照常開車、會主動談論事故，沒有逃避想法或提醒物。'],
+['懷孕中受暴後，偏好藥物',{event:'violence',pregnant:'yes',preference:'med',pcl:'50'},'懷孕、備孕或哺乳轉周產期共同決策，工具不自動產生標準處方。','31歲女性，懷孕20週。10個月前夜間返家途中遭陌生人持刀搶劫，之後不敢獨自出門、反覆惡夢與驚嚇。目前居住環境安全，希望討論藥物。'],
+['中度肝硬化，偏好藥物',{event:'medical',liver:'moderate',preference:'med',pcl:'47'},'Child-Pugh B以上不建議sertraline，其他藥物交專科及藥師規劃。','55歲男性，酒精性肝硬化Child-Pugh B，已戒酒2年。8個月前因食道靜脈曲張大出血住進加護病房，之後反覆回想插管、出血畫面，不敢回醫院追蹤。希望討論藥物。'],
+['未控制高血壓，想比較venlafaxine',{event:'disaster',bp:'high',preference:'med',med:'venlafaxine',pcl:'52'},'血壓未控制時先控制血壓，暫不開始venlafaxine；可改比較其他選項。','49歲男性，1年前地震受困瓦礫下6小時。目前家中血壓約170/100 mmHg，自行停用降壓藥；朋友推薦venlafaxine，希望比較此藥。'],
+['酒精使用合併明顯解離',{event:'violence',comorbid:['substance','dissociation','depression'],preference:'combined',pcl:'58'},'物質使用協同治療、不一概排除創傷治療；解離由受訓團隊調整節奏並評估複雜性PTSD。','27歲女性，童年及成年後多次遭受人際暴力。近年每晚喝酒才能入睡，常恍神、失去時間感，覺得像在看別人的生活，合併憂鬱。希望心理治療與藥物並用。'],
+['充分治療後反應不佳，惡夢持續',{event:'work',prior:'failed',preference:'med',med:'sertraline',nightmares:'yes',pcl:'51'},'先核對診斷、共病、依從性及療程品質；prazosin只針對惡夢，不自動疊加抗精神病藥。','44歲消防員，多年反覆處理重大傷亡現場。已完成完整CPT療程，並曾足量足期使用paroxetine超過12週，改善有限，仍每週多次惡夢。想討論改用sertraline。'],
+['持續家暴，環境不安全',{event:'violence',risk:'unsafe',pcl:'55',confirmed:false},'持續受暴屬當日優先：先處理環境安全與保護資源，再規劃治療。','36歲女性，長期遭同住伴侶毆打，上週再次被掐脖。仍與對方同住，擔心今晚回家會再受傷。'],
+['頭部外傷後，其他原因待排除',{excluded:'no',pcl:'44',confirmed:false},'腦傷、物質、藥物或睡眠疾患仍可能解釋症狀時，先鑑別，不以症狀計數判定PTSD。','46歲男性，9個月前車禍合併腦震盪。之後注意力差、易怒、失眠、頭痛；同時服用含codeine止痛藥並每晚飲酒，症狀是否由腦傷或物質引起尚未釐清。'],
+['多年前災難，近兩週新症狀',{event:'disaster',elapsed:'year',duration:'month',pcl:'',confirmed:false},'舊創傷伴短期新症狀不自動判為ASD或PTSD，釐清延遲出現與新事件並短期追蹤。','60歲女性，10年前水災中失去住家，之後生活與工作正常。近兩週颱風預報後開始反覆回想當年、失眠、時刻注意雨聲。']];
 function example(i){return {...defaults(),age:'adult',event:'accident',exposure:'yes',elapsed:'year',duration:'long',risk:'none',impairment:'yes',excluded:'yes',confirmed:true,symptoms:['yes','yes','no','yes','yes','yes','yes','no','yes','yes','yes','yes','no','no','yes','no','yes','yes','no','yes'],pcl:'48',preference:'therapy',access:'yes',bipolar:'no',pregnant:'no',renal:'normal',liver:'normal',interaction:'clear',bp:'normal',nightmares:'no',orthostasis:'no',prior:'new',...cases[i][1]};}
 const api={groups,defaults,diagnose,plan,followup,cases,example};root.PTSD=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);
