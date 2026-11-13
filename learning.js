@@ -84,8 +84,51 @@ branch('recovery','08 復原、轉介與資料照護','支持功能復原，準�
 ['不輸入識別資料','一次一份評估，換人使用新評估／清除。'],['本機保留為選用','僅在瀏覽器處理，共用電腦不宜留存。'],['匯出妥善保管','本機續存不是醫療資訊系統或跨裝置備份。']],[]]])
 ];
 function grade(answers){const missing=questions.map((q,i)=>Number.isInteger(answers[i])&&answers[i]>=0&&answers[i]<q.options.length?-1:i).filter(i=>i>=0),correct=questions.filter((q,i)=>answers[i]===q.answer).length;return {complete:!missing.length,answered:questions.length-missing.length,missing,correct,percent:missing.length?null:Math.round(correct/questions.length*100)};}
+const pitfalls={
+'safety-risk':'只問「有沒有想死」，未問計畫、工具與過往行為，會低估風險。',
+'safety-protect':'在加害者可能在場時詢問受暴，或未經同意聯絡家屬。',
+'safety-interview':'為了確診而要求病人反覆詳述創傷細節。',
+'diagnosis-a':'以事件名稱（如車禍）直接認定符合條件A，或把一般媒體觀看算入。',
+'diagnosis-clusters':'總分很高就忽略缺少的C群逃避症狀。',
+'diagnosis-fgh':'把「距事件時間」當成「症狀持續時間」。',
+'diagnosis-measures':'未評估的項目當作陰性，或以PCL-5單獨確診。',
+'early-time':'舊創傷近期出現症狀就直接套用ASD。',
+'early-action':'事件後立即要求所有人詳述經過，或未安排後續聯繫。',
+'early-avoid':'常規開立藥物（含benzodiazepine）「預防」PTSD。',
+'psychotherapy-modalities':'宣稱某一種療法對所有人必然最佳。',
+'psychotherapy-match':'因等候時間長就放棄實證心理治療，未討論轉介或遠距。',
+'psychotherapy-combined':'出席或練習不足時就判定治療無效。',
+'medication-options':'把三個比較選項合併使用，或跨製劑套用劑量上限。',
+'medication-safety':'未問躁症史、懷孕及交互作用即開始SSRI／SNRI。',
+'medication-nightmares':'把prazosin當成PTSD整體治療，或對低血壓者常規使用。',
+'special-renal':'血液透析病人以一般劑量開始venlafaxine。',
+'special-liver':'中重度肝病仍套用sertraline一般劑量。',
+'special-psychiatry':'對兒少套用成人PCL-5門檻或成人劑量。',
+'followup-baseline':'更換量表版本或回顧期間後直接比較分數。',
+'followup-interpret':'分數下降就忽略新出現的自傷意圖。',
+'followup-review':'開始用藥後等到8–12週才第一次回診。',
+'recovery-goals':'只追分數，未追功能與病人自訂目標。',
+'recovery-relapse':'分數一低就突然停藥。',
+'recovery-tool':'在共用電腦勾選本機保留或輸入病歷號。'};
+const caseBranches=[['diagnosis-clusters','psychotherapy-modalities'],['early-time','early-action'],['special-renal','medication-options'],['medication-nightmares','special-renal'],['safety-risk'],['special-psychiatry','safety-protect'],['special-psychiatry','medication-safety'],['diagnosis-clusters','diagnosis-measures'],['special-liver','medication-safety'],['special-liver'],['medication-options'],['special-psychiatry','psychotherapy-combined'],['followup-review','medication-nightmares','recovery-goals'],['safety-protect'],['diagnosis-fgh'],['early-time']];
+tree.forEach(r=>r.children.forEach(c=>{c.pitfall=pitfalls[c.id];c.cases=caseBranches.map((b,i)=>b.includes(c.id)?i:-1).filter(i=>i>=0);}));
+const synonyms=[['腎','透析','crcl','dialysis'],['惡夢','nightmare','prazosin','睡眠'],['自殺','suicide','自傷','安全計畫'],['兒少','兒童','青少年','child','未滿18歲'],['懷孕','pregnancy','哺乳','周產期','備孕'],['肝','child-pugh','liver'],['ssri','sertraline','paroxetine'],['snri','venlafaxine'],['血壓','低血壓','暈厥','姿勢性'],['酒','alcohol','物質'],['解離','dissociation','複雜創傷'],['量表','pcl-5','caps-5'],['急性壓力','asd','3天至1個月'],['家暴','受暴','暴力'],['心理治療','cpt','pe','emdr'],['停藥','減藥','停藥症狀']];
+const expandTerm=t=>{const set=new Set([t]);synonyms.forEach(g=>{if(g.includes(t))g.forEach(x=>set.add(x));});return [...set];};
 const searchTerms=query=>String(query||'').toLocaleLowerCase().split(/[\s,，、;；]+/).filter(Boolean);
-function filterTree(nodes,query){const terms=searchTerms(query);if(!terms.length)return nodes;const text=n=>[n.title,n.description,n.body].filter(Boolean).join(' ').toLocaleLowerCase();const prune=(n,context)=>{const own=context+' '+text(n);if(terms.every(t=>own.includes(t)))return n;const children=(n.children||[]).map(c=>prune(c,own)).filter(Boolean);return children.length?{...n,children}:null;};return nodes.map(n=>prune(n,'')).filter(Boolean);}
+function filterTree(nodes,query){const terms=searchTerms(query).map(expandTerm);if(!terms.length)return nodes;const text=n=>[n.title,n.description,n.body,n.pitfall].filter(Boolean).join(' ').toLocaleLowerCase();const prune=(n,context)=>{const own=context+' '+text(n);if(terms.every(alts=>alts.some(t=>own.includes(t))))return n;const children=(n.children||[]).map(c=>prune(c,own)).filter(Boolean);return children.length?{...n,children}:null;};return nodes.map(n=>prune(n,'')).filter(Boolean);}
+function relevance(s,code,recordCount){const r={},add=(id,why)=>{(r[id]=r[id]||[]).push(why);};if(!s)return r;
+if(['imminent','violence','withdrawal'].includes(s.risk))add('safety-risk','目前有急迫風險');if(s.risk==='ideation')add('safety-risk','有自傷想法');if(s.risk==='unsafe')add('safety-protect','環境不安全／持續受暴');
+if(code==='acute'){add('early-time','症狀未滿1個月或時間待釐清');add('early-action','早期照護選擇');}
+if(code==='subthreshold')add('diagnosis-clusters','症狀群或功能未達條件');if(code==='differential')add('diagnosis-fgh','其他原因尚未排除');if(code==='incomplete'&&s.risk&&s.age&&!['child','young'].includes(s.age))add('diagnosis-measures','評估資料尚未完整');
+if(code==='child'||['child','young'].includes(s.age))add('special-psychiatry','兒少個案');if(s.bipolar==='yes')add('special-psychiatry','疑似雙相');if((s.comorbid||[]).some(x=>['substance','dissociation'].includes(x)))add('special-psychiatry','物質使用或解離共病');
+if(['moderate','severe','dialysis'].includes(s.renal))add('special-renal','腎功能下降／透析');if(s.age==='older')add('special-renal','65歲以上');
+if(['mild','moderate','severe'].includes(s.liver))add('special-liver','肝功能不全');if(s.pregnant==='yes')add('special-liver','懷孕／備孕／哺乳');
+if(s.nightmares==='yes')add('medication-nightmares','持續惡夢');if(s.bp==='low'||s.orthostasis==='yes')add('medication-nightmares','低血壓／姿勢性症狀');
+if(['med','combined'].includes(s.preference)&&code==='probable'){add('medication-options','偏好討論藥物');add('medication-safety','用藥前安全核對');}if(s.bp==='high'&&s.med==='venlafaxine')add('medication-options','未控制高血壓＋venlafaxine');
+if(code==='probable'&&['therapy','undecided','combined'].includes(s.preference))add('psychotherapy-match','共同選擇心理治療');if(s.access==='no')add('psychotherapy-match','心理治療可近性不足');
+if(['failed','partial'].includes(s.prior)){add('followup-review','既往治療反應不佳');add('psychotherapy-combined','療程與反應需檢視');}
+if(recordCount)add('followup-interpret','已有'+recordCount+'筆追蹤紀錄');return r;}
+function wrongByBranch(answers){const r={};questions.forEach((q,i)=>{if(answers[i]!==q.answer)(r[q.branch]=r[q.branch]||[]).push(i);});return r;}
 const countLeaves=nodes=>nodes.reduce((n,a)=>n+(a.children?countLeaves(a.children):1),0);
-const api={questions,tree,grade,filterTree,countLeaves,searchTerms};root.PTSDLearning=api;if(typeof module!=='undefined')module.exports=api;
+const api={questions,tree,grade,filterTree,countLeaves,searchTerms,expandTerm,pitfalls,caseBranches,relevance,wrongByBranch};root.PTSDLearning=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

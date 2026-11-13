@@ -30,5 +30,13 @@ test('urgent risk overrides symptom reduction',()=>{assert.equal(E.followup([row
 test('serious side effects override improvement',()=>{assert.equal(E.followup([row('2026-10-01',60),row('2026-11-01',20,{side:'serious'})]).tone,'danger');});
 test('bothersome side effects flagged',()=>{assert.match(E.followup([row('2026-10-01',60),row('2026-11-01',20,{side:'mild'})]).title,/副作用/);});
 test('deterioration and inadequate response differentiated',()=>{assert.match(E.followup([row('2026-10-01',30),row('2026-11-01',45)]).title,/惡化/);assert.match(E.followup([row('2026-10-01',50),row('2026-11-01',47,{weeks:10,adequate:'yes'})]).title,/改善有限/);});
-test('eight valid examples',()=>{for(let i=0;i<8;i++){const s=E.example(i);assert.equal(s.symptoms.length,20);assert.ok(s.pcl===''||Number(s.pcl)>=0&&Number(s.pcl)<=80);}});
+test('sixteen valid examples with teaching points',()=>{assert.equal(E.cases.length,16);for(let i=0;i<16;i++){assert.ok(E.cases[i][2].length>10);}for(let i=0;i<16;i++){const s=E.example(i);assert.equal(s.symptoms.length,20);assert.ok(s.pcl===''||Number(s.pcl)>=0&&Number(s.pcl)<=80);}});
+test('pregnancy case routes to perinatal shared decision without a drug',()=>{const p=E.plan(E.example(8));assert.equal(p.drug,null);assert.ok(p.warnings.some(x=>x.includes('周產期')));});
+test('moderate liver case blocks sertraline',()=>{const p=E.plan(E.example(9));assert.equal(p.drug,null);assert.ok(p.warnings.some(x=>x.includes('中重度肝功能不全')));});
+test('uncontrolled hypertension blocks venlafaxine start',()=>{const p=E.plan(E.example(10));assert.equal(p.drug,null);assert.ok(p.warnings.some(x=>x.includes('venlafaxine')));});
+test('substance and dissociation warnings both shown and combined plan continues',()=>{const p=E.plan(E.example(11));assert.ok(p.warnings.some(x=>x.includes('物質使用')));assert.ok(p.warnings.some(x=>x.includes('解離')));assert.equal(p.drug.name,'Sertraline');});
+test('treatment failure reviews care and limits prazosin to nightmares',()=>{const p=E.plan(E.example(12));assert.ok(p.warnings.some(x=>x.includes('充分治療仍無效')));assert.ok(p.warnings.some(x=>x.includes('prazosin')&&x.includes('僅針對惡夢')));});
+test('ongoing violence is same-day priority',()=>{assert.equal(E.diagnose(E.example(13)).code,'priority');});
+test('unexcluded alternative causes go to differential',()=>{assert.equal(E.diagnose(E.example(14)).code,'differential');});
+test('old trauma with new short symptoms is not called recent ASD',()=>{const d=E.diagnose(E.example(15));assert.equal(d.code,'acute');assert.equal(d.recent,false);});
 console.log(n+' clinical regression checks passed.');

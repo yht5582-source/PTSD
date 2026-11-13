@@ -66,7 +66,23 @@ if(delta>=10)return {tone:'success',title:'量表出現具意義的改善訊號'
 if(last.weeks>=8&&last.adequate==='yes')return {tone:'warn',title:'充分治療後改善有限，重評治療',text:'先確認足夠劑量、時間及心理治療品質，再共同討論優化或更換治療。8週為本工具回顧提醒，非所有療法固定失敗門檻。',delta};
 return {tone:'info',title:'持續追蹤並檢視治療負擔',text:'尚未達下降10分的反應指標；依耐受性、療程進度與功能共同決策，無自動加藥／停藥規則。',delta};
 }
-const cases=[['交通事故後反覆再體驗',{pcl:'48',preference:'therapy'}],['事件後兩週，症狀明顯',{elapsed:'month',duration:'month',pcl:'',confirmed:false}],['高齡、CKD、偏好藥物',{age:'older',renal:'severe',pcl:'43',preference:'med'}],['血液透析合併低血壓惡夢',{renal:'dialysis',bp:'low',orthostasis:'yes',nightmares:'yes',pcl:'46',preference:'med'}],['自傷計畫，緊急評估',{risk:'imminent',pcl:'62',confirmed:false}],['青少年受暴後症狀',{age:'young',event:'violence',pcl:'',confirmed:false}],['疑似雙相，偏好藥物',{bipolar:'yes',preference:'med',pcl:'45'}],['高分但無逃避症狀',{symptoms:['yes','yes','yes','yes','yes','no','no',...Array(13).fill('yes')],pcl:'54',confirmed:false}]];
+const cases=[
+['交通事故後反覆再體驗',{pcl:'48',preference:'therapy'},'A–H條件完整且醫師確認；偏好心理治療時優先討論CPT／PE／EMDR，不自動加藥。'],
+['事件後兩週，症狀明顯',{elapsed:'month',duration:'month',pcl:'',confirmed:false},'症狀未滿1個月不診斷PTSD；另以ASD規則評估，提供支持並於1個月內追蹤。'],
+['高齡、CKD、偏好藥物',{age:'older',renal:'severe',pcl:'43',preference:'med'},'Sertraline通常不需因腎功能調整；高齡與進階腎病仍須慢調並追蹤血鈉、跌倒及出血。'],
+['血液透析合併低血壓惡夢',{renal:'dialysis',bp:'low',orthostasis:'yes',nightmares:'yes',pcl:'46',preference:'med'},'惡夢合併低血壓／姿勢性症狀時不自動建議prazosin，先評估跌倒與透析低血壓。'],
+['自傷計畫，緊急評估',{risk:'imminent',pcl:'62',confirmed:false},'有自傷計畫或無法確保安全時，暫停一般演算法，直接啟動緊急評估。'],
+['青少年受暴後症狀',{age:'young',event:'violence',pcl:'',confirmed:false},'兒少不套用成人PCL-5門檻與劑量，轉兒少專科並評估保護需求。'],
+['疑似雙相，偏好藥物',{bipolar:'yes',preference:'med',pcl:'45'},'疑似或已知雙相不直接使用抗憂鬱劑單方，先轉精神科評估。'],
+['高分但無逃避症狀',{symptoms:['yes','yes','yes','yes','yes','no','no',...Array(13).fill('yes')],pcl:'54',confirmed:false},'PCL-5高分不能補足缺少的C群逃避症狀，結果為亞閾值，需臨床訪談。'],
+['懷孕中受暴後，偏好藥物',{event:'violence',pregnant:'yes',preference:'med',pcl:'50'},'懷孕、備孕或哺乳轉周產期共同決策，工具不自動產生標準處方。'],
+['中度肝硬化，偏好藥物',{event:'medical',liver:'moderate',preference:'med',pcl:'47'},'Child-Pugh B以上不建議sertraline，其他藥物交專科及藥師規劃。'],
+['未控制高血壓，想比較venlafaxine',{event:'disaster',bp:'high',preference:'med',med:'venlafaxine',pcl:'52'},'血壓未控制時先控制血壓，暫不開始venlafaxine；可改比較其他選項。'],
+['酒精使用合併明顯解離',{event:'violence',comorbid:['substance','dissociation','depression'],preference:'combined',pcl:'58'},'物質使用協同治療、不一概排除創傷治療；解離由受訓團隊調整節奏並評估複雜性PTSD。'],
+['充分治療後反應不佳，惡夢持續',{event:'work',prior:'failed',preference:'med',med:'sertraline',nightmares:'yes',pcl:'51'},'先核對診斷、共病、依從性及療程品質；prazosin只針對惡夢，不自動疊加抗精神病藥。'],
+['持續家暴，環境不安全',{event:'violence',risk:'unsafe',pcl:'55',confirmed:false},'持續受暴屬當日優先：先處理環境安全與保護資源，再規劃治療。'],
+['頭部外傷後，其他原因待排除',{excluded:'no',pcl:'44',confirmed:false},'腦傷、物質、藥物或睡眠疾患仍可能解釋症狀時，先鑑別，不以症狀計數判定PTSD。'],
+['多年前災難，近兩週新症狀',{event:'disaster',elapsed:'year',duration:'month',pcl:'',confirmed:false},'舊創傷伴短期新症狀不自動判為ASD或PTSD，釐清延遲出現與新事件並短期追蹤。']];
 function example(i){return {...defaults(),age:'adult',event:'accident',exposure:'yes',elapsed:'year',duration:'long',risk:'none',impairment:'yes',excluded:'yes',confirmed:true,symptoms:['yes','yes','no','yes','yes','yes','yes','no','yes','yes','yes','yes','no','no','yes','no','yes','yes','no','yes'],pcl:'48',preference:'therapy',access:'yes',bipolar:'no',pregnant:'no',renal:'normal',liver:'normal',interaction:'clear',bp:'normal',nightmares:'no',orthostasis:'no',prior:'new',...cases[i][1]};}
 const api={groups,defaults,diagnose,plan,followup,cases,example};root.PTSD=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);
