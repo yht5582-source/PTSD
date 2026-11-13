@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict'),L=require('../learning.js');let passed=0;
+const test=(n,fn)=>{fn();passed++;console.log('PASS '+n);};
+test('20 unique clinical questions with 10 basic and 10 advanced',()=>{assert.equal(L.questions.length,20);assert.equal(new Set(L.questions.map(q=>q.id)).size,20);for(const level of ['basic','advanced'])assert.equal(L.questions.filter(q=>q.level===level).length,10);});
+test('all questions have four options a valid answer explanation and real reference IDs',()=>{for(const q of L.questions){assert.equal(q.options.length,4);assert.ok(Number.isInteger(q.answer)&&q.answer>=0&&q.answer<4);assert.ok(q.explain.length>15);assert.ok(q.refs.length);assert.ok(q.refs.every(n=>n>=1&&n<=9));assert.ok(L.tree.some(t=>t.id===q.branch));}});
+test('blank quiz cannot produce a score',()=>{const g=L.grade([]);assert.equal(g.complete,false);assert.equal(g.percent,null);assert.equal(g.missing.length,20);});
+test('zero-valued answer is counted while null and invalid answers are not',()=>{const a=Array(20).fill(null);a[0]=0;a[1]=4;a[2]=-1;assert.equal(L.grade(a).answered,1);});
+test('all correct scores 100',()=>{const g=L.grade(L.questions.map(q=>q.answer));assert.equal(g.correct,20);assert.equal(g.percent,100);});
+test('mixed wrong and right answers score 50',()=>{const g=L.grade(L.questions.map((q,i)=>i<10?q.answer:(q.answer+1)%4));assert.equal(g.correct,10);assert.equal(g.percent,50);});
+test('missing final answer is identified',()=>{const g=L.grade(L.questions.slice(0,19).map(q=>q.answer));assert.deepEqual(g.missing,[19]);assert.equal(g.percent,null);});
+test('mindmap has 8 roots 25 subbranches and 75 detailed leaves',()=>{assert.equal(L.tree.length,8);assert.equal(L.tree.reduce((n,r)=>n+r.children.length,0),25);assert.equal(L.countLeaves(L.tree),75);});
+test('all mindmap node IDs unique and source links valid',()=>{const ids=[];function walk(ns){for(const n of ns){ids.push(n.id);if(n.refs)assert.ok(n.refs.every(x=>x>=1&&x<=9));if(n.children)walk(n.children);else assert.ok(n.body.length>5);}}walk(L.tree);assert.equal(new Set(ids).size,ids.length);});
+test('search retains matching descendants and parent context without mutation',()=>{const before=JSON.stringify(L.tree),r=L.filterTree(L.tree,'透析');assert.ok(r.some(n=>n.id==='special'));assert.ok(L.countLeaves(r)<75);assert.equal(JSON.stringify(L.tree),before);});
+test('search handles no matches whitespace and case insensitive Latin text',()=>{assert.deepEqual(L.filterTree(L.tree,'zzzz-no-match'),[]);assert.equal(L.filterTree(L.tree,'  ').length,8);assert.ok(L.countLeaves(L.filterTree(L.tree,'pcl-5'))>0);});
+console.log(passed+' learning checks passed.');
