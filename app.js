@@ -47,5 +47,5 @@ if($('follow-form'))$('follow-form').onsubmit=event=>{event.preventDefault();con
 document.querySelectorAll('[data-delete]').forEach(b=>b.onclick=async()=>{if(!await ask('刪除'+b.dataset.delete+'的追蹤紀錄？'))return;records=records.filter(x=>x.date!==b.dataset.delete);save();render();});
 if($('export-csv'))$('export-csv').onclick=()=>{const rows=[['日期','PCL-5','功能受損0-10','惡夢天數','療程週數','足夠治療已確認','安全','副作用'],...records.map(r=>[r.date,r.pcl,r.function,r.nightmare,r.weeks,r.adequate,riskLabel(r.risk),r.side])];download('PTSD-followup-'+today()+'.csv','\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n'),'text/csv;charset=utf-8');};
 }
-window.addEventListener('hashchange',()=>{const i=hashes.indexOf(location.hash.slice(1));if(i>=0&&i!==page){page=i;render();}});const initial=hashes.indexOf(location.hash.slice(1));if(initial>=0)page=initial;render();
+window.addEventListener('hashchange',()=>{const i=hashes.indexOf(location.hash.slice(1));if(i>=0&&i!==page){page=i;render();window.scrollTo(0,0);}});const initial=hashes.indexOf(location.hash.slice(1));if(initial>=0)page=initial;render();
 

@@ -84,7 +84,8 @@ branch('recovery','08 復原、轉介與資料照護','支持功能復原，準�
 ['不輸入識別資料','一次一份評估，換人使用新評估／清除。'],['本機保留為選用','僅在瀏覽器處理，共用電腦不宜留存。'],['匯出妥善保管','本機續存不是醫療資訊系統或跨裝置備份。']],[]]])
 ];
 function grade(answers){const missing=questions.map((q,i)=>Number.isInteger(answers[i])&&answers[i]>=0&&answers[i]<q.options.length?-1:i).filter(i=>i>=0),correct=questions.filter((q,i)=>answers[i]===q.answer).length;return {complete:!missing.length,answered:questions.length-missing.length,missing,correct,percent:missing.length?null:Math.round(correct/questions.length*100)};}
-function filterTree(nodes,query){const q=query.trim().toLocaleLowerCase();if(!q)return nodes;const prune=n=>{if([n.title,n.description,n.body].filter(Boolean).join(' ').toLocaleLowerCase().includes(q))return n;const children=(n.children||[]).map(prune).filter(Boolean);return children.length?{...n,children}:null;};return nodes.map(prune).filter(Boolean);}
+const searchTerms=query=>String(query||'').toLocaleLowerCase().split(/[\s,，、;；]+/).filter(Boolean);
+function filterTree(nodes,query){const terms=searchTerms(query);if(!terms.length)return nodes;const text=n=>[n.title,n.description,n.body].filter(Boolean).join(' ').toLocaleLowerCase();const prune=(n,context)=>{const own=context+' '+text(n);if(terms.every(t=>own.includes(t)))return n;const children=(n.children||[]).map(c=>prune(c,own)).filter(Boolean);return children.length?{...n,children}:null;};return nodes.map(n=>prune(n,'')).filter(Boolean);}
 const countLeaves=nodes=>nodes.reduce((n,a)=>n+(a.children?countLeaves(a.children):1),0);
-const api={questions,tree,grade,filterTree,countLeaves};root.PTSDLearning=api;if(typeof module!=='undefined')module.exports=api;
+const api={questions,tree,grade,filterTree,countLeaves,searchTerms};root.PTSDLearning=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);
