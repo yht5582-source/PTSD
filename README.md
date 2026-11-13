@@ -26,6 +26,14 @@
 
 內建8例虛構病例：交通事故、事件後兩週、高齡CKD、血液透析低血壓惡夢、自傷計畫、青少年受暴、疑似雙相、高PCL-5但無逃避症狀。載入會清除目前表單及追蹤，避免混用。
 
+## 教學考題與心智圖（2026-11-13新增）
+
+- **20題單選考題**：基礎10題、進階情境10題，包含安全分流、診斷、早期反應、心理治療、透析／肝病用藥、雙相疑慮、兒少及追蹤。
+- 完成全部20題後提交，顯示分數、正確答案、逐題解析及原始指引來源。支援未答提示、難度篩選、重新作答與結果匯出。
+- 錯題可直接跳到相關心智圖分支複習。作答僅在本頁記憶體保留，切換頁面不丟失，重新整理會清空；不混入臨床評估與追蹤。
+- **詳細心智圖**：8個主題、25個分支、75個重點，含來源與臨床流程連結。支援多層展開／收合、全部展開／收合、關鍵字搜尋與無結果提示。
+- 直接連結：[考題](https://yht5582-source.github.io/PTSD/#quiz)／[心智圖](https://yht5582-source.github.io/PTSD/#mindmap)。
+
 ## 資料及匯出
 
 預設僅保留於本頁記憶體。主動勾選「本機保留評估與追蹤」後才寫入目前瀏覽器localStorage；無資料庫、登入或個案上傳。可匯出文字摘要及UTF-8 BOM的追蹤CSV。
@@ -48,12 +56,14 @@
 
 ## 維護與部署
 
-純HTML/CSS/JavaScript，無外部字型、套件或API。`index.html`是可直接執行的單檔版本，適合GitHub Pages或本機開啟。原始碼拆為`engine.js`、`app.js`及`styles.css`，執行`python3 build.py`重建。
+純HTML/CSS/JavaScript，無外部字型、套件或API。`index.html`是可直接執行的單檔版本，適合GitHub Pages或本機開啟。原始碼拆為`engine.js`、`learning.js`、`learning-ui.js`、`app.js`及`styles.css`，執行`python3 build.py`重建。
 
 ```sh
 node tests/engine.test.cjs
+node tests/learning.test.cjs
 python3 build.py
 python3 -m http.server 8765
 ```
 
 GitHub Pages設定使用`main`分支的根目錄。醫療規則更新後請同步更新查核日期、依據、示範及回歸測試，並驗證桌面與手機主要流程。
+
